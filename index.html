@@ -7,35 +7,76 @@
     <style>
         body {
             display: flex;
+            flex-direction: column;
             justify-content: center;
             align-items: center;
             height: 100vh;
             margin: 0;
             background-color: #f0f0f0;
-            flex-direction: column;
         }
         .words-container {
-            display: flex;
-            justify-content: space-between; /* Промяна на разположението на колоните */
-            width: 80%; /* По-малка ширина за по-близко разположение */
             margin-bottom: 20px;
             font-size: 18px;
             font-family: 'Arial', sans-serif;
             color: #007bff;
         }
-        .words-column {
+        /* Стил за малките квадратчета */
+        .small-squares-outer-container {
+            display: flex;
+            justify-content: flex-start; /* Премества вляво */
+            align-items: flex-start;     /* Премества нагоре */
+            margin-bottom: 20px;
+            position: absolute;          /* Позволява прецизно позициониране */
+            top: 50px;                   /* Премества нагоре */
+            left: 20px;                  /* Премества вляво */
+        }
+        .small-squares-container {
             display: flex;
             flex-direction: column;
-            align-items: center;
-            margin: 0 5px; /* Намалено разстояние между колоните */
+            margin-right: 20px; /* Разстояние между двете групи */
         }
-        .word-box {
-            background-color: #e0e0e0;
+        .row {
+            display: flex;
+            justify-content: center;
+            margin-bottom: 5px; /* Разстояние между редовете */
+        }
+        .small-square {
+            width: 50px;
+            height: 50px;
+            border: 2px dashed #007bff;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            font-size: 24px;
+            color: #007bff;
+            margin: 0 5px; /* Разстояние между квадратчетата в реда */
             border-radius: 5px;
-            padding: 5px 10px;
-            margin: 3px 0; /* Разстояние между думите */
-            width: 100px;
-            text-align: center;
+        }
+        .large-squares-outer-container {
+            display: flex;
+            justify-content: flex-start; /* Премества вляво */
+            align-items: flex-start;     /* Премества нагоре */
+            margin-bottom: 20px;
+            position: absolute;          /* Позволява прецизно позициониране */
+            top: 50px;                   /* Премества нагоре */
+            left: 550px;                 /* Премества вдясно */
+        }
+        .large-squares-container {
+            display: flex;
+            flex-direction: column;
+            margin-right: 20px; /* Разстояние между двете групи */
+        }
+        .large-square {
+            width: 50px;
+            height: 50px;
+            border: 2px dashed #007bff;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            font-size: 24px;
+            color: #007bff;
+            margin: 0 5px; /* Разстояние между квадратчетата в реда */
+            border-radius: 5px;
         }
         .empty-squares-container {
             display: flex;
@@ -57,6 +98,8 @@
         }
         .letters-container {
             display: flex;
+            margin-bottom: -500px;
+            
         }
         .letter {
             width: 100px;
@@ -74,6 +117,12 @@
             box-shadow: 0 4px 10px rgba(0, 0, 0, 0.2);
             cursor: pointer;
         }
+        .new-game-container {
+            width: 100%;
+            display: flex;
+            justify-content: flex-end;
+            padding: 0 50px;
+        }
         button {
             padding: 10px 20px;
             font-size: 16px;
@@ -90,18 +139,83 @@
     </style>
 </head>
 <body>
-    <div class="words-container" id="words-container">
-        <div class="words-column" id="four-letters-column">
-            <h3>4 букви</h3>
-            <div id="four-letters"></div>
+
+    <!-- Новите малки квадратчета в два набора -->
+    <div class="small-squares-outer-container">
+        <!-- Първи набор от 3 колони по 3 квадратчета -->
+        <div class="small-squares-container">
+            <div class="row">
+                <div class="small-square"></div>
+                <div class="small-square"></div>
+                <div class="small-square"></div>
+            </div>
+            <div class="row">
+                <div class="small-square"></div>
+                <div class="small-square"></div>
+                <div class="small-square"></div>
+            </div>
+            <div class="row">
+                <div class="small-square"></div>
+                <div class="small-square"></div>
+                <div class="small-square"></div>
+            </div>
         </div>
-        <div class="words-column" id="five-letters-column">
-            <h3>5 букви</h3>
-            <div id="five-letters"></div>
+
+        <!-- Втори набор от 3 колони по 3 квадратчета -->
+        <div class="small-squares-container">
+            <div class="row">
+                <div class="small-square"></div>
+                <div class="small-square"></div>
+                <div class="small-square"></div>
+            </div>
+            <div class="row">
+                <div class="small-square"></div>
+                <div class="small-square"></div>
+                <div class="small-square"></div>
+            </div>
+            <div class="row">
+                <div class="small-square"></div>
+                <div class="small-square"></div>
+                <div class="small-square"></div>
+            </div>
         </div>
     </div>
+
+    <!-- Новите квадратчета 4 реда по 4 квадратчета -->
+    <div class="large-squares-outer-container">
+        <div class="large-squares-container">
+            <div class="row">
+                <div class="large-square"></div>
+                <div class="large-square"></div>
+                <div class="large-square"></div>
+                <div class="large-square"></div>
+            </div>
+            <div class="row">
+                <div class="large-square"></div>
+                <div class="large-square"></div>
+                <div class="large-square"></div>
+                <div class="large-square"></div>
+            </div>
+            <div class="row">
+                <div class="large-square"></div>
+                <div class="large-square"></div>
+                <div class="large-square"></div>
+                <div class="large-square"></div>
+            </div>
+            <div class="row">
+                <div class="large-square"></div>
+                <div class="large-square"></div>
+                <div class="large-square"></div>
+                <div class="large-square"></div>
+            </div>
+        </div>
+    </div>
+
+    <div class="words-container" id="words-container">
+        <!-- Възможни думи ще бъдат показани тук -->
+    </div>
     <div class="empty-squares-container" id="empty-squares-container">
-        <!-- Empty squares -->
+        <!-- Празни квадратчета -->
         <div class="empty-square" id="empty-square-1"></div>
         <div class="empty-square" id="empty-square-2"></div>
         <div class="empty-square" id="empty-square-3"></div>
@@ -109,7 +223,11 @@
         <div class="empty-square" id="empty-square-5"></div>
     </div>
     <div class="letters-container" id="letters-container"></div>
-    <button id="new-game">New Game</button>
+
+    <!-- Добавен контейнер за бутона -->
+    <div class="new-game-container">
+        <button id="new-game">New Game</button>
+    </div>
 
     <script>
         const container = document.getElementById('letters-container');
@@ -117,69 +235,23 @@
         const emptySquares = document.querySelectorAll('.empty-square');
         const wordsContainer = document.getElementById('words-container');
 
-        // Локален речник с думи
-        let dictionary = [];
-
-        // Затваряме функцията за зареждане на думите от GitHub
-        async function loadWordsFromGitHub() {
-            try {
-                const response = await fetch('https://raw.githubusercontent.com/diavolaa/mania/main/words.txt');
-                const text = await response.text();
-                dictionary = text.split('\n').map(word => word.trim().toUpperCase());
-                // Генерираме буквите след зареждане на думите
-                generateRandomLetters();
-            } catch (error) {
-                console.error('Error loading words:', error);
-            }
-        }
-
-        loadWordsFromGitHub();
+        const dictionary = ["CAT", "ACT", "CAR", "ART", "CART", "RAT", "ARC", "CARD", "ACTOR", "TAR", "DOG", "GOD", "DIG", "BIG", "BOG"];
 
         let originalPositions = new Map();
 
-        // Филтрираме думите, за да намерим тези, които могат да се образуват с дадените букви
         function findPossibleWords(letters) {
-            const possibleWords = {
-                fourLetters: [],
-                fiveLetters: []
-            };
+            let possibleWords = [];
 
-            // Търсим в локалния речник думи, които могат да се съставят с наличните букви
-            dictionary.forEach(word => {
-                if (word.length >= 4) {
-                    if (isWordPossible(letters, word)) {
-                        if (word.length === 4) {
-                            possibleWords.fourLetters.push(word);
-                        } else if (word.length === 5) {
-                            possibleWords.fiveLetters.push(word);
-                        }
-                    }
-                }
-            });
+            possibleWords = dictionary.filter(word => isWordPossible(letters, word));
 
-            // Проверяваме дали можем да образуваме 5-буквена дума и, ако е възможно, 4-буквена
-            if (possibleWords.fiveLetters.length > 0) {
-                displayWords(possibleWords.fourLetters, 'four-letters');
-                displayWords(possibleWords.fiveLetters, 'five-letters');
+            if (possibleWords.length > 0) {
+                const randomWord = possibleWords[Math.floor(Math.random() * possibleWords.length)];
+                wordsContainer.textContent = `Possible word: ${randomWord}`;
             } else {
-                // Генерираме нови букви, ако не можем да образуваме 5-буквена дума
-                generateRandomLetters();
+                wordsContainer.textContent = "No possible words.";
             }
         }
 
-        // Показване на думите в квадратчета
-        function displayWords(words, columnId) {
-            const column = document.getElementById(columnId);
-            column.innerHTML = ''; // Изчистване на старата информация
-            words.forEach(word => {
-                const wordBox = document.createElement('div');
-                wordBox.className = 'word-box';
-                wordBox.textContent = word;
-                column.appendChild(wordBox);
-            });
-        }
-
-        // Проверка дали дадена дума може да бъде съставена от наличните букви
         function isWordPossible(letters, word) {
             const lettersCopy = [...letters];
             for (const letter of word) {
@@ -203,7 +275,6 @@
             let validLetters = [];
             let selectedLetters = [];
 
-            // Избираме букви, които могат да формират поне 5-6 думи
             dictionary.forEach(word => {
                 word.split('').forEach(letter => {
                     if (!validLetters.includes(letter)) {
@@ -217,31 +288,25 @@
                 selectedLetters.push(randomLetter);
             }
 
-            // Генерираме случайни букви, които могат да образуват думи
             for (let i = 0; i < 5; i++) {
                 const letter = document.createElement('div');
                 letter.className = 'letter';
                 letter.textContent = selectedLetters[i];
 
-                // Запазваме оригиналната позиция на буквата
                 originalPositions.set(letter.textContent, letter);
 
                 letter.addEventListener('click', () => handleClickLetter(letter));
                 container.appendChild(letter);
             }
 
-            // Търсим възможни думи
             findPossibleWords(selectedLetters);
         }
 
         function handleClickLetter(letter) {
             const letterText = letter.textContent;
-
-            // Намираме първото празно квадратче
             const emptySquare = Array.from(emptySquares).find(square => square.textContent === '');
 
             if (emptySquare) {
-                // Поставяме буквата в празното квадратче и я скриваме отдолу
                 emptySquare.textContent = letterText;
                 letter.style.visibility = 'hidden';
                 emptySquare.addEventListener('click', () => handleClickEmptySquare(emptySquare, letter));
@@ -253,7 +318,8 @@
             letter.style.visibility = 'visible';
         }
 
-        // Събитие за "New Game" бутона
+        generateRandomLetters();
+
         newGameButton.addEventListener('click', generateRandomLetters);
     </script>
 </body>

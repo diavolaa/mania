@@ -27,6 +27,15 @@
             display: flex;
             flex-direction: column;
             align-items: center;
+            margin: 0 10px; /* Минимално разстояние между колоните */
+        }
+        .word-box {
+            background-color: #e0e0e0;
+            border-radius: 5px;
+            padding: 5px 10px;
+            margin: 3px 0; /* Разстояние между думите */
+            width: 100px;
+            text-align: center;
         }
         .empty-squares-container {
             display: flex;
@@ -155,10 +164,22 @@
                 }
             });
 
-            // Показваме намерените думи
-            document.getElementById('three-letters').textContent = possibleWords.threeLetters.join(', ');
-            document.getElementById('four-letters').textContent = possibleWords.fourLetters.join(', ');
-            document.getElementById('five-letters').textContent = possibleWords.fiveLetters.join(', ');
+            // Показваме намерените думи в квадратчета
+            displayWords(possibleWords.threeLetters, 'three-letters');
+            displayWords(possibleWords.fourLetters, 'four-letters');
+            displayWords(possibleWords.fiveLetters, 'five-letters');
+        }
+
+        // Показване на думите в квадратчета
+        function displayWords(words, columnId) {
+            const column = document.getElementById(columnId);
+            column.innerHTML = ''; // Изчистване на старата информация
+            words.forEach(word => {
+                const wordBox = document.createElement('div');
+                wordBox.className = 'word-box';
+                wordBox.textContent = word;
+                column.appendChild(wordBox);
+            });
         }
 
         // Проверка дали дадена дума може да бъде съставена от наличните букви

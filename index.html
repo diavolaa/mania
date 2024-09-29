@@ -3,21 +3,197 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>My Game</title>
+    <title>Random Letters with Possible Words</title>
     <style>
         body {
-            background-color: black;
-            color: white;
-            text-align: center;
-            font-family: Arial, sans-serif;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            height: 100vh;
+            margin: 0;
+            background-color: #f0f0f0;
+            flex-direction: column;
         }
-        iframe {
+        .words-container {
+            margin-bottom: 20px;
+            font-size: 18px;
+            font-family: 'Arial', sans-serif;
+            color: #007bff;
+        }
+        .empty-squares-container {
+            display: flex;
+            margin-bottom: 20px;
+        }
+        .empty-square {
+            width: 100px;
+            height: 100px;
+            border: 2px dashed #007bff;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            font-size: 64px;
+            color: #007bff;
+            font-family: 'Arial', sans-serif;
+            margin: 5px;
+            border-radius: 10px;
+            cursor: pointer;
+        }
+        .letters-container {
+            display: flex;
+        }
+        .letter {
+            width: 100px;
+            height: 100px;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            color: #fff;
+            font-size: 64px;
+            font-family: 'Arial', sans-serif;
+            font-weight: bold;
+            background-color: #007bff;
+            margin: 5px;
+            border-radius: 10px;
+            box-shadow: 0 4px 10px rgba(0, 0, 0, 0.2);
+            cursor: pointer;
+        }
+        button {
+            padding: 10px 20px;
+            font-size: 16px;
+            cursor: pointer;
+            background-color: #28a745;
+            color: white;
             border: none;
+            border-radius: 5px;
+            margin-top: 20px;
+        }
+        button:hover {
+            background-color: #218838;
         }
     </style>
 </head>
 <body>
-    <h1>Welcome to My Game</h1>
-    <iframe src="https://play.famobi.com/bubble-tower-3d" width="800" height="600"></iframe>
+    <div class="words-container" id="words-container">
+        <!-- Possible words will be displayed here -->
+    </div>
+    <div class="empty-squares-container" id="empty-squares-container">
+        <!-- Empty squares -->
+        <div class="empty-square" id="empty-square-1"></div>
+        <div class="empty-square" id="empty-square-2"></div>
+        <div class="empty-square" id="empty-square-3"></div>
+        <div class="empty-square" id="empty-square-4"></div>
+        <div class="empty-square" id="empty-square-5"></div>
+    </div>
+    <div class="letters-container" id="letters-container"></div>
+    <button id="new-game">New Game</button>
+
+    <script>
+        const container = document.getElementById('letters-container');
+        const newGameButton = document.getElementById('new-game');
+        const emptySquares = document.querySelectorAll('.empty-square');
+        const wordsContainer = document.getElementById('words-container');
+
+        // Локален речник с думи
+        const dictionary = ["CAT", "ACT", "CAR", "ART", "CART", "RAT", "ARC", "CARD", "ACTOR", "TAR", "DOG", "GOD", "DIG", "BIG", "BOG"];
+
+        let originalPositions = new Map();
+
+        // Филтрираме думите, за да намерим тези, които могат да се образуват с дадените букви
+        function findPossibleWords(letters) {
+            let possibleWords = [];
+
+            // Търсим в локалния речник думи, които могат да се съставят с наличните букви
+            possibleWords = dictionary.filter(word => isWordPossible(letters, word));
+
+            // Показваме намерените думи
+            if (possibleWords.length > 0) {
+                // Извеждаме произволна дума от намерените
+                const randomWord = possibleWords[Math.floor(Math.random() * possibleWords.length)];
+                wordsContainer.textContent = `Possible word: ${randomWord}`;
+            } else {
+                wordsContainer.textContent = "No possible words.";
+            }
+        }
+
+        // Проверка дали дадена дума може да бъде съставена от наличните букви
+        function isWordPossible(letters, word) {
+            const lettersCopy = [...letters];
+            for (const letter of word) {
+                const index = lettersCopy.indexOf(letter);
+                if (index !== -1) {
+                    lettersCopy.splice(index, 1);
+                } else {
+                    return false;
+                }
+            }
+            return true;
+        }
+
+        function generateRandomLetters() {
+            container.innerHTML = '';
+            originalPositions.clear();
+            emptySquares.forEach(square => {
+                square.textContent = '';
+            });
+
+            let validLetters = [];
+            let selectedLetters = [];
+
+            // Избираме букви, които могат да формират поне 5-6 думи
+            dictionary.forEach(word => {
+                word.split('').forEach(letter => {
+                    if (!validLetters.includes(letter)) {
+                        validLetters.push(letter);
+                    }
+                });
+            });
+
+            while (selectedLetters.length < 5) {
+                let randomLetter = validLetters[Math.floor(Math.random() * validLetters.length)];
+                selectedLetters.push(randomLetter);
+            }
+
+            // Генерираме случайни букви, които могат да образуват думи
+            for (let i = 0; i < 5; i++) {
+                const letter = document.createElement('div');
+                letter.className = 'letter';
+                letter.textContent = selectedLetters[i];
+
+                // Запазваме оригиналната позиция на буквата
+                originalPositions.set(letter.textContent, letter);
+
+                letter.addEventListener('click', () => handleClickLetter(letter));
+                container.appendChild(letter);
+            }
+
+            // Търсим възможни думи
+            findPossibleWords(selectedLetters);
+        }
+
+        function handleClickLetter(letter) {
+            const letterText = letter.textContent;
+
+            // Намираме първото празно квадратче
+            const emptySquare = Array.from(emptySquares).find(square => square.textContent === '');
+
+            if (emptySquare) {
+                // Поставяме буквата в празното квадратче и я скриваме отдолу
+                emptySquare.textContent = letterText;
+                letter.style.visibility = 'hidden';
+                emptySquare.addEventListener('click', () => handleClickEmptySquare(emptySquare, letter));
+            }
+        }
+
+        function handleClickEmptySquare(square, letter) {
+            square.textContent = '';
+            letter.style.visibility = 'visible';
+        }
+
+        // Генерираме първоначални букви
+        generateRandomLetters();
+
+        // Събитие за "New Game" бутона
+        newGameButton.addEventListener('click', generateRandomLetters);
+    </script>
 </body>
 </html>

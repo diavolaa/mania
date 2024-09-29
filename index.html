@@ -93,21 +93,24 @@
         const emptySquares = document.querySelectorAll('.empty-square');
         const wordsContainer = document.getElementById('words-container');
 
-        // Локален речник с думи
-        const dictionary = ["CAT", "ACT", "CAR", "ART", "CART", "RAT", "ARC", "CARD", "ACTOR", "TAR", "DOG", "GOD", "DIG", "BIG", "BOG"];
+        let dictionary = []; // Инициализиране на масив за думите
+
+        // Зареждане на думите от GitHub
+        async function loadWordsFromGitHub() {
+            const response = await fetch('https://raw.githubusercontent.com/diavolaa/mania/main/words.txt');
+            const text = await response.text();
+            dictionary = text.split('\n').map(word => word.trim().toUpperCase()); // Преобразуване в масив
+            generateRandomLetters(); // Генерирай букви след зареждане на думите
+        }
 
         let originalPositions = new Map();
 
         // Филтрираме думите, за да намерим тези, които могат да се образуват с дадените букви
         function findPossibleWords(letters) {
-            let possibleWords = [];
-
-            // Търсим в локалния речник думи, които могат да се съставят с наличните букви
-            possibleWords = dictionary.filter(word => isWordPossible(letters, word));
+            let possibleWords = dictionary.filter(word => isWordPossible(letters, word));
 
             // Показваме намерените думи
             if (possibleWords.length > 0) {
-                // Извеждаме произволна дума от намерените
                 const randomWord = possibleWords[Math.floor(Math.random() * possibleWords.length)];
                 wordsContainer.textContent = `Possible word: ${randomWord}`;
             } else {
@@ -139,45 +142,31 @@
             let validLetters = [];
             let selectedLetters = [];
 
-            // Избираме букви, които могат да формират поне 5-6 думи
-            dictionary.forEach(word => {
-                word.split('').forEach(letter => {
-                    if (!validLetters.includes(letter)) {
-                        validLetters.push(letter);
-                    }
-                });
-            });
-
             while (selectedLetters.length < 5) {
-                let randomLetter = validLetters[Math.floor(Math.random() * validLetters.length)];
-                selectedLetters.push(randomLetter);
+                let randomLetter = dictionary[Math.floor(Math.random() * dictionary.length)].charAt(0);
+                if (!selectedLetters.includes(randomLetter)) {
+                    selectedLetters.push(randomLetter);
+                }
             }
 
-            // Генерираме случайни букви, които могат да образуват думи
             for (let i = 0; i < 5; i++) {
                 const letter = document.createElement('div');
                 letter.className = 'letter';
                 letter.textContent = selectedLetters[i];
 
-                // Запазваме оригиналната позиция на буквата
                 originalPositions.set(letter.textContent, letter);
-
                 letter.addEventListener('click', () => handleClickLetter(letter));
                 container.appendChild(letter);
             }
 
-            // Търсим възможни думи
             findPossibleWords(selectedLetters);
         }
 
         function handleClickLetter(letter) {
             const letterText = letter.textContent;
-
-            // Намираме първото празно квадратче
             const emptySquare = Array.from(emptySquares).find(square => square.textContent === '');
 
             if (emptySquare) {
-                // Поставяме буквата в празното квадратче и я скриваме отдолу
                 emptySquare.textContent = letterText;
                 letter.style.visibility = 'hidden';
                 emptySquare.addEventListener('click', () => handleClickEmptySquare(emptySquare, letter));
@@ -189,8 +178,8 @@
             letter.style.visibility = 'visible';
         }
 
-        // Генерираме първоначални букви
-        generateRandomLetters();
+        // Зареждаме думите от GitHub
+        loadWordsFromGitHub();
 
         // Събитие за "New Game" бутона
         newGameButton.addEventListener('click', generateRandomLetters);

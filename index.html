@@ -93,36 +93,40 @@
         const emptySquares = document.querySelectorAll('.empty-square');
         const wordsContainer = document.getElementById('words-container');
 
-        let dictionary = []; // Глобална променлива за речника
+        // Локален речник с думи
+        let dictionary = [];
 
+        // Затваряме функцията за зареждане на думите от GitHub
         async function loadWordsFromGitHub() {
             try {
                 const response = await fetch('https://raw.githubusercontent.com/diavolaa/mania/main/words.txt');
-                if (!response.ok) {
-                    throw new Error('Network response was not ok');
-                }
                 const text = await response.text();
                 dictionary = text.split('\n').map(word => word.trim().toUpperCase());
-                console.log(dictionary); // Покажи заредените думи
-                generateRandomLetters(); // Генерирай букви след зареждане на думите
             } catch (error) {
                 console.error('Error loading words:', error);
             }
         }
 
+        loadWordsFromGitHub();
+
         let originalPositions = new Map();
 
+        // Филтрираме думите, за да намерим тези, които могат да се образуват с дадените букви
         function findPossibleWords(letters) {
             let possibleWords = [];
+
+            // Търсим в локалния речник думи, които могат да се съставят с наличните букви
             possibleWords = dictionary.filter(word => isWordPossible(letters, word));
+
+            // Показваме намерените думи
             if (possibleWords.length > 0) {
-                const randomWord = possibleWords[Math.floor(Math.random() * possibleWords.length)];
-                wordsContainer.textContent = `Possible word: ${randomWord}`;
+                wordsContainer.textContent = `Possible words: ${possibleWords.join(', ')}`;
             } else {
                 wordsContainer.textContent = "No possible words.";
             }
         }
 
+        // Проверка дали дадена дума може да бъде съставена от наличните букви
         function isWordPossible(letters, word) {
             const lettersCopy = [...letters];
             for (const letter of word) {
@@ -146,6 +150,7 @@
             let validLetters = [];
             let selectedLetters = [];
 
+            // Избираме букви, които могат да формират поне 5-6 думи
             dictionary.forEach(word => {
                 word.split('').forEach(letter => {
                     if (!validLetters.includes(letter)) {
@@ -159,24 +164,31 @@
                 selectedLetters.push(randomLetter);
             }
 
+            // Генерираме случайни букви, които могат да образуват думи
             for (let i = 0; i < 5; i++) {
                 const letter = document.createElement('div');
                 letter.className = 'letter';
                 letter.textContent = selectedLetters[i];
 
+                // Запазваме оригиналната позиция на буквата
                 originalPositions.set(letter.textContent, letter);
+
                 letter.addEventListener('click', () => handleClickLetter(letter));
                 container.appendChild(letter);
             }
 
+            // Търсим възможни думи
             findPossibleWords(selectedLetters);
         }
 
         function handleClickLetter(letter) {
             const letterText = letter.textContent;
+
+            // Намираме първото празно квадратче
             const emptySquare = Array.from(emptySquares).find(square => square.textContent === '');
 
             if (emptySquare) {
+                // Поставяме буквата в празното квадратче и я скриваме отдолу
                 emptySquare.textContent = letterText;
                 letter.style.visibility = 'hidden';
                 emptySquare.addEventListener('click', () => handleClickEmptySquare(emptySquare, letter));
@@ -188,9 +200,10 @@
             letter.style.visibility = 'visible';
         }
 
-        // Извикай функцията при стартиране
-        loadWordsFromGitHub();
+        // Генерираме първоначални букви
+        generateRandomLetters();
 
+        // Събитие за "New Game" бутона
         newGameButton.addEventListener('click', generateRandomLetters);
     </script>
 </body>

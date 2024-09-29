@@ -16,8 +16,8 @@
         }
         .words-container {
             display: flex;
-            justify-content: space-around;
-            width: 100%;
+            justify-content: space-between; /* Промяна на разположението на колоните */
+            width: 80%; /* По-малка ширина за по-близко разположение */
             margin-bottom: 20px;
             font-size: 18px;
             font-family: 'Arial', sans-serif;
@@ -27,7 +27,7 @@
             display: flex;
             flex-direction: column;
             align-items: center;
-            margin: 0 10px; /* Минимално разстояние между колоните */
+            margin: 0 5px; /* Намалено разстояние между колоните */
         }
         .word-box {
             background-color: #e0e0e0;
@@ -91,10 +91,6 @@
 </head>
 <body>
     <div class="words-container" id="words-container">
-        <div class="words-column" id="three-letters-column">
-            <h3>3 букви</h3>
-            <div id="three-letters"></div>
-        </div>
         <div class="words-column" id="four-letters-column">
             <h3>4 букви</h3>
             <div id="four-letters"></div>
@@ -144,18 +140,15 @@
         // Филтрираме думите, за да намерим тези, които могат да се образуват с дадените букви
         function findPossibleWords(letters) {
             const possibleWords = {
-                threeLetters: [],
                 fourLetters: [],
                 fiveLetters: []
             };
 
             // Търсим в локалния речник думи, които могат да се съставят с наличните букви
             dictionary.forEach(word => {
-                if (word.length >= 3) {
+                if (word.length >= 4) {
                     if (isWordPossible(letters, word)) {
-                        if (word.length === 3) {
-                            possibleWords.threeLetters.push(word);
-                        } else if (word.length === 4) {
+                        if (word.length === 4) {
                             possibleWords.fourLetters.push(word);
                         } else if (word.length === 5) {
                             possibleWords.fiveLetters.push(word);
@@ -164,10 +157,14 @@
                 }
             });
 
-            // Показваме намерените думи в квадратчета
-            displayWords(possibleWords.threeLetters, 'three-letters');
-            displayWords(possibleWords.fourLetters, 'four-letters');
-            displayWords(possibleWords.fiveLetters, 'five-letters');
+            // Проверяваме дали можем да образуваме 5-буквена дума и, ако е възможно, 4-буквена
+            if (possibleWords.fiveLetters.length > 0) {
+                displayWords(possibleWords.fourLetters, 'four-letters');
+                displayWords(possibleWords.fiveLetters, 'five-letters');
+            } else {
+                // Генерираме нови букви, ако не можем да образуваме 5-буквена дума
+                generateRandomLetters();
+            }
         }
 
         // Показване на думите в квадратчета
@@ -255,9 +252,6 @@
             square.textContent = '';
             letter.style.visibility = 'visible';
         }
-
-        // Генерираме първоначални букви при зареждане на страницата
-        generateRandomLetters();
 
         // Събитие за "New Game" бутона
         newGameButton.addEventListener('click', generateRandomLetters);

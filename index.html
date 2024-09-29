@@ -15,10 +15,18 @@
             flex-direction: column;
         }
         .words-container {
+            display: flex;
+            justify-content: space-around;
+            width: 100%;
             margin-bottom: 20px;
             font-size: 18px;
             font-family: 'Arial', sans-serif;
             color: #007bff;
+        }
+        .words-column {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
         }
         .empty-squares-container {
             display: flex;
@@ -74,7 +82,18 @@
 </head>
 <body>
     <div class="words-container" id="words-container">
-        <!-- Possible words will be displayed here -->
+        <div class="words-column" id="three-letters-column">
+            <h3>3 букви</h3>
+            <div id="three-letters"></div>
+        </div>
+        <div class="words-column" id="four-letters-column">
+            <h3>4 букви</h3>
+            <div id="four-letters"></div>
+        </div>
+        <div class="words-column" id="five-letters-column">
+            <h3>5 букви</h3>
+            <div id="five-letters"></div>
+        </div>
     </div>
     <div class="empty-squares-container" id="empty-squares-container">
         <!-- Empty squares -->
@@ -102,6 +121,8 @@
                 const response = await fetch('https://raw.githubusercontent.com/diavolaa/mania/main/words.txt');
                 const text = await response.text();
                 dictionary = text.split('\n').map(word => word.trim().toUpperCase());
+                // Генерираме буквите след зареждане на думите
+                generateRandomLetters();
             } catch (error) {
                 console.error('Error loading words:', error);
             }
@@ -113,17 +134,31 @@
 
         // Филтрираме думите, за да намерим тези, които могат да се образуват с дадените букви
         function findPossibleWords(letters) {
-            let possibleWords = [];
+            const possibleWords = {
+                threeLetters: [],
+                fourLetters: [],
+                fiveLetters: []
+            };
 
             // Търсим в локалния речник думи, които могат да се съставят с наличните букви
-            possibleWords = dictionary.filter(word => isWordPossible(letters, word));
+            dictionary.forEach(word => {
+                if (word.length >= 3) {
+                    if (isWordPossible(letters, word)) {
+                        if (word.length === 3) {
+                            possibleWords.threeLetters.push(word);
+                        } else if (word.length === 4) {
+                            possibleWords.fourLetters.push(word);
+                        } else if (word.length === 5) {
+                            possibleWords.fiveLetters.push(word);
+                        }
+                    }
+                }
+            });
 
             // Показваме намерените думи
-            if (possibleWords.length > 0) {
-                wordsContainer.textContent = `Possible words: ${possibleWords.join(', ')}`;
-            } else {
-                wordsContainer.textContent = "No possible words.";
-            }
+            document.getElementById('three-letters').textContent = possibleWords.threeLetters.join(', ');
+            document.getElementById('four-letters').textContent = possibleWords.fourLetters.join(', ');
+            document.getElementById('five-letters').textContent = possibleWords.fiveLetters.join(', ');
         }
 
         // Проверка дали дадена дума може да бъде съставена от наличните букви
@@ -200,7 +235,7 @@
             letter.style.visibility = 'visible';
         }
 
-        // Генерираме първоначални букви
+        // Генерираме първоначални букви при зареждане на страницата
         generateRandomLetters();
 
         // Събитие за "New Game" бутона
